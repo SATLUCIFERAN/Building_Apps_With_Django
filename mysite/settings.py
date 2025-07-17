@@ -16,6 +16,7 @@ from pathlib import Path
 ######### Part 11.4: Configure settings.py for Production ########
 import os
 import dj_database_url
+import stripe
 
 
 
@@ -28,14 +29,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o&a+tm@ie)6iull_gwe_cduze65kh0w!5^095)7e!01qyd1d(e'
+
+
+
+# SECRET_KEY = 'django-insecure-o&a+tm@ie)6iull_gwe_cduze65kh0w!5^095)7e!01qyd1d(e'
+######### Part 11.4: Configure settings.py for Production ########
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
-
-
-DEBUG = 'True'
-
+# DEBUG = 'True'
 ######### Part 11.4: Configure settings.py for Production ########
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
@@ -196,8 +199,20 @@ MEDIA_ROOT = BASE_DIR / 'media' # <--- The absolute path to the directory where 
 # BASE_DIR ensures it's relative to your project root.
 
 
-RECAPTCHA_PUBLIC_KEY  = "6LcLQ38rAAAAABMUb_jyoKb5C_S3mZNV0yQXNjjN"    # <--- Replace with your actual Site Key
-RECAPTCHA_PRIVATE_KEY = "6LcLQ38rAAAAAI9dn5LfFz0k5wh_K4S__C-DiKlK"    #<--- Replace with your actual Secret Key
+
+# RECAPTCHA_PUBLIC_KEY  = "6LcLQ38rAAAAABMUb_jyoKb5C_S3mZNV0yQXNjjN"               # <--- Replace with your actual Site Key
+# RECAPTCHA_PRIVATE_KEY = "6LcLQ38rAAAAAI9dn5LfFz0k5wh_K4S__C-DiKlK" 
+
+######### Part 11.4: Configure settings.py for Production ########
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY') # MODIFIED
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY') # MODIFIED
+
+
+   #<--- Replace with your actual Secret Key
+
+
+
+
 
 
 # SILENCED_SYSTEM_CHECKS = [
@@ -245,20 +260,32 @@ REST_FRAMEWORK = {
 ASGI_APPLICATION = 'mysite.asgi.application'
 
 
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.pubsub.RedisPubSubChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)], # Default Redis host and port
+#         },
+#     },
+# }
+
+######### Part 11.4: Configure settings.py for Production ########
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.pubsub.RedisPubSubChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)], # Default Redis host and port
+            "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')], # MODIFIED: Read Redis URL from env var
         },
     },
 }
 
 
 
+
+
 ############################ Stripe Payment ###########################
 
-import stripe
 
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY') 
