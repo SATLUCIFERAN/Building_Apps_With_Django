@@ -151,7 +151,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'https://building-apps-static.onrender.com/static/'
 
 ######### Part 11.4: Configure settings.py for Production ########
 # NEW: Configuration for serving static files in production
