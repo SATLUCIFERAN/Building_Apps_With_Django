@@ -640,7 +640,7 @@
                     {# --- END NEW: Cart Link --- #}
                     {% if user.is_authenticated %} {# RETAINED #}
                         <li class="nav-item"> {# RETAINED #}
-                            <a class="nav-link text-dark" href="{% url 'profile_view' %}">Welcome, {{ user.username }}!</a> {# RETAINED #}
+                            <a class="nav-link text-dark" href="{% url 'profile' %}">Welcome, {{ user.username }}!</a> {# RETAINED #}
                         </li>
                         <li class="nav-item"> {# RETAINED #}
                             <a class="nav-link btn btn-outline-danger btn-sm ms-2" href="{% url 'logout' %}">Logout</a> {# RETAINED #}
