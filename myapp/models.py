@@ -308,10 +308,10 @@ from django.db.models import Index
     
 # myapp/models.py (updated with Order and OrderItem models)
 
-from django.db import models
-from django.contrib.auth.models import User
-from PIL import Image
-from django.urls import reverse
+# from django.db import models
+# from django.contrib.auth.models import User
+# from PIL import Image
+# from django.urls import reverse
 
 # class Category(models.Model):
 #     name = models.CharField(max_length=200, db_index=True)
@@ -556,7 +556,34 @@ from django.urls import reverse
 from decimal import Decimal
 import uuid # IMPORTED: Required for UUIDField in Cart
 
+######################## Deploy ################
+import os # <--- ADD THIS LINE
+from django.utils.text import slugify 
+
 # UserProfile model (retained and correctly placed)
+# class UserProfile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     phone_number = models.CharField(max_length=20, blank=True, null=True)
+#     address = models.CharField(max_length=255, blank=True, null=True)
+#     city = models.CharField(max_length=100, blank=True, null=True)
+#     country = models.CharField(max_length=100, blank=True, null=True)
+#     profile_picture = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics', blank=True, null=True)
+
+#     def __str__(self):
+#         return f'{self.user.username} Profile'
+
+#     def save(self, *args, **kwargs):
+#         super().save(*args, **kwargs)
+#         if self.profile_picture:
+#             img = Image.open(self.profile_picture.path)
+#             if img.height > 300 or img.width > 300:
+#                 output_size = (300, 300)
+#                 img.thumbnail(output_size)
+#                 img.save(self.profile_picture.path)
+
+
+############################## test deploy ##########################
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
@@ -569,13 +596,18 @@ class UserProfile(models.Model):
         return f'{self.user.username} Profile'
 
     def save(self, *args, **kwargs):
+        # Call the original save method first
         super().save(*args, **kwargs)
-        if self.profile_picture:
+
+        # Only attempt to resize if a profile picture exists and the file is accessible
+        if self.profile_picture and os.path.exists(self.profile_picture.path): # MODIFIED LINE
             img = Image.open(self.profile_picture.path)
             if img.height > 300 or img.width > 300:
                 output_size = (300, 300)
                 img.thumbnail(output_size)
                 img.save(self.profile_picture.path)
+
+
 
 # Category model (retained)
 class Category(models.Model):
