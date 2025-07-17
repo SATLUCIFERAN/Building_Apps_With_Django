@@ -66,7 +66,7 @@ INSTALLED_APPS = [
     ############ Third-Party Apps ##########
     'django_recaptcha',
     'rest_framework',
-    'channels',
+    # 'channels',
 ]
 
 MIDDLEWARE = [
@@ -257,7 +257,7 @@ REST_FRAMEWORK = {
 
 
 # NEW: Channels ASGI application
-ASGI_APPLICATION = 'mysite.asgi.application'
+# ASGI_APPLICATION = 'mysite.asgi.application'
 
 
 # CHANNEL_LAYERS = {
@@ -271,14 +271,14 @@ ASGI_APPLICATION = 'mysite.asgi.application'
 
 ######### Part 11.4: Configure settings.py for Production ########
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.pubsub.RedisPubSubChannelLayer',
-        'CONFIG': {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')], # MODIFIED: Read Redis URL from env var
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.pubsub.RedisPubSubChannelLayer',
+#         'CONFIG': {
+#             "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')], # MODIFIED: Read Redis URL from env var
+#         },
+#     },
+# }
 
 
 
