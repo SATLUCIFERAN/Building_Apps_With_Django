@@ -455,8 +455,8 @@ urlpatterns = [
     path('register/', views.register, name='register'), # RETAINED
     path('login/', views.user_login, name='login'), # RETAINED
     path('logout/', views.user_logout, name='logout'), # RETAINED
-    path('profile/', views.UserProfileView.as_view(), name='profile_view'), # RETAINED
-    path('profile/edit/', views.UserProfileUpdateView.as_view(), name='profile_update'), # RETAINED
+    path('profile/', views.UserProfileView.as_view(), name='profile'), # RETAINED
+    path('profile/edit/', views.UserProfileUpdateView.as_view(), name='profile_edit'), # RETAINED
     path('orders/', views.OrderHistoryView.as_view(), name='order_history'), # RETAINED
     path('vendor-dashboard/', views.VendorDashboardView.as_view(), name='vendor_dashboard'), # RETAINED
 
