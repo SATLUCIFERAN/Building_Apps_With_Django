@@ -1,0 +1,83 @@
+
+{% extends "myapp/base.html" %}
+{% comment %} ################### Chapter XII topics12.18 Crafting the Profile Editing Forms: The Customer's Quill ################ {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}Edit Your Profile{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded-lg p-4">
+                <h1 class="card-title text-center text-primary mb-4">Edit Your Alchemist Profile</h1>
+                <p class="text-center text-muted mb-4">Update your magical identity and personal details.</p>
+
+                <form method="post" enctype="multipart/form-data"> {# IMPORTANT: enctype for file uploads #}
+                    {% csrf_token %} {# Essential for security #}
+
+                    <fieldset class="form-group mb-4">
+                        <legend class="border-bottom pb-2 mb-3 text-secondary">Core Identity (User)</legend>
+                        {% for field in user_form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text text-muted small">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {% if user_form.non_field_errors %}
+                            <div class="alert alert-danger mt-3">
+                                {% for error in user_form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </fieldset>
+
+                    <fieldset class="form-group mb-4">
+                        <legend class="border-bottom pb-2 mb-3 text-secondary">Personalized Scroll (Profile)</legend>
+                        {% for field in profile_form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {# Special handling for profile_picture to display current image #}
+                                {% if field.name == 'profile_picture' and user.userprofile.profile_picture %}
+                                    <img src="{{ user.userprofile.profile_picture.url }}" class="img-thumbnail rounded-circle mb-2" style="width: 100px; height: 100px; object-fit: cover;" alt="Profile Picture">
+                                    {# Logic & Imagination: Displaying the customer's current magical portrait. #}
+                                {% endif %}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text text-muted small">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {% if profile_form.non_field_errors %}
+                            <div class="alert alert-danger mt-3">
+                                {% for error in profile_form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </fieldset>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-md shadow">Update Profile</button>
+                    </div>
+                </form>
+                <p class="text-center mt-3">
+                    <a href="{% url 'profile_view' %}" class="btn btn-outline-secondary btn-sm">Back to Profile View</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

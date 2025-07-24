@@ -1,0 +1,34 @@
+
+{% extends "myapp/base.html" %}
+
+{% comment %} ############################ ChapterXII  Part4  topic 12.12 Restricting Access to Staff/Superusers: Elite Wards  ############################# {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-lg rounded-lg p-4 text-center">
+                <h1 class="card-title text-success mb-4">
+                    Welcome to the Vendor Dashboard, {{ user.username }}!</h1>
+                <p class="lead text-muted">
+                    This is your exclusive chamber for 
+                    managing your magical inventory and sales.</p>
+                <hr class="my-4">
+                <p>Only authorized staff members can access this area.</p>
+                <hr class="my-4">
+                <a href="{% url 'home' %}" \
+                class="btn btn-outline-secondary rounded-md shadow">Return to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+

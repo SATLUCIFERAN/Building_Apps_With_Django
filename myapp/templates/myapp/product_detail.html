@@ -1,0 +1,151 @@
+
+{% extends "myapp/base.html" %}
+{% comment %} ########## Chapter X PART 2  topics 10.7.2 DetailView: Revealing a Single Scroll's Secrets ################# {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% comment %} {% load static %}
+
+{% block title %}{{ product.name }} Details{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+
+  <div class="col-md-4">
+    {% if product.image %}
+      <img
+        src="{{ product.image.url }}"
+        class="img-fluid rounded shadow-sm"
+        alt="{{ product.name }}"
+      >
+    {% else %}
+      <img
+        src="{% static 'myapp/placeholder.png' %}"
+        class="img-fluid rounded shadow-sm"
+        alt="No image"
+      >
+    {% endif %}
+  </div>
+
+  <div class="col-md-8">
+    <h1 class="mb-3">{{ product.name }}</h1>
+    <p class="lead text-muted">
+      Category: {{ product.category.name }}
+    </p>
+    <p class="text-justify">
+      {{ product.description }}
+    </p>
+    <h2 class="text-primary">
+      ${{ product.price }}
+    </h2>
+    {% if product.available %}
+      <span class="badge bg-success">In Stock</span>
+    {% else %}
+      <span class="badge bg-danger">Out of Stock</span>
+    {% endif %}
+    <p class="mt-3 text-sm text-muted">
+      Created: {{ product.created|date:"M d, Y" }} |
+      Last Updated: {{ product.updated|date:"M d, Y, P" }}
+    </p>
+    <button class="btn btn-primary btn-lg mt-3">
+      Add to Cart (Coming Soon!)
+    </button>
+  </div>
+
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} ####################### Chapter XIII topic 13.4 Displaying the Masterpieces: Showing Product Images on the Frontend ################# {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% comment %} {% load static %}
+
+{% block title %}{{ product.name }} Details{% endblock %} {# RETAINED: Your original title block #}
+
+{% block content %}
+<div class="row mt-4"> {# RETAINED: Your original row styling #}
+    <div class="col-md-4"> {# RETAINED: Your original column width #}
+        {% if product.image %} {# <--- NEW/MODIFIED: Check if product has an image #}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}"> <!-- NEW/MODIFIED: Image tag for product image, retained your original styling -->
+        {% else %} {# <--- NEW/MODIFIED: Fallback if no image #}
+            <img src="{% static 'myapp/placeholder.png' %}" class="img-fluid rounded shadow-sm" alt="No image"> <!-- NEW/MODIFIED: Placeholder image, retained your original styling -->
+        {% endif %} {# <--- NEW/MODIFIED: End if #}
+    </div>
+    <div class="col-md-8"> {# RETAINED: Your original column width #}
+        <h1 class="mb-3">{{ product.name }}</h1> {# RETAINED: Your original heading styling #}
+        <p class="lead text-muted">Category: {{ product.category.name }}</p> {# RETAINED: Your original category display #}
+        <p class="text-justify">{{ product.description }}</p> {# RETAINED: Your original description styling #}
+        <h2 class="text-primary">${{ product.price }}</h2> {# RETAINED: Your original price styling #}
+        {% if product.available %}
+            <span class="badge bg-success">In Stock</span> {# RETAINED: Your original badge styling #}
+        {% else %}
+            <span class="badge bg-danger">Out of Stock</span> {# RETAINED: Your original badge styling #}
+        {% endif %}
+        <p class="mt-3 text-sm text-muted">Created: {{ product.created|date:"M d, Y" }} | Last Updated: {{ product.updated|date:"M d, Y, P" }}</p> {# RETAINED: Your original date display #}
+        <button class="btn btn-primary btn-lg mt-3">Add to Cart (Coming Soon!)</button> {# RETAINED: Your original button styling and text #}
+        {# <--- NEW/MODIFIED: Adding a "Back to Products" link for navigation #}
+        <p class="mt-3">
+            <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">Back to Products</a>
+        </p>
+    </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+{% comment %} ############# ChapterXIV topic 15.2  The Gathering Spell: Adding Products to the Cart ############## {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %} {# Ensure this line is at the very top #} {% endcomment %}
+{% load static %}
+
+{% block title %}{{ product.name }} Details{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static 'myapp/placeholder.png' %}" class="img-fluid rounded shadow-sm" alt="No image">
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h1 class="mb-3">{{ product.name }}</h1>
+        <p class="lead text-muted">Category: {{ product.category.name }}</p>
+        <p class="text-justify">{{ product.description }}</p>
+        <h2 class="text-primary">${{ product.price }}</h2>
+        {% if product.available %}
+            <span class="badge bg-success">In Stock</span>
+        {% else %}
+            <span class="badge bg-danger">Out of Stock</span>
+        {% endif %}
+        <p class="mt-3 text-sm text-muted">Created: {{ product.created|date:"M d, Y" }} | Last Updated: {{ product.updated|date:"M d, Y, P" }}</p>
+
+        {# --- NEW: Add to Cart Form (replaces "Coming Soon" button, retaining its margin) --- #}
+        {% if product.available %}
+            {# The form structure is placed where the "Coming Soon" button was, inheriting its mt-3 #}
+            <form action="{% url 'add_to_cart' product.id %}" method="POST" class="d-flex align-items-center mt-3">
+                {% csrf_token %} {# Django requires this for all POST forms for security #}
+                <div class="input-group w-auto me-3">
+                    <label for="quantity" class="visually-hidden">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" class="form-control text-center" style="width: 80px;">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+            </form>
+        {% else %}
+            <p class="alert alert-warning mt-3">This magical item is currently out of stock.</p>
+        {% endif %}
+        {# --- END NEW: Add to Cart Form --- #}
+
+        <p class="mt-3">
+            <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">Back to Products</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

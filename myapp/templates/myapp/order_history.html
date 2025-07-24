@@ -1,0 +1,52 @@
+
+{% extends "myapp/base.html" %}
+
+{% comment %} ############# ChapterXII  Part4  topic 12.11 Protecting Class-Based Views with LoginRequiredMixin:   ################## {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}My Order History{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-lg rounded-lg p-4">
+        <h1 class="card-title text-center text-primary mb-4">Your Magical Order History</h1>
+        <p class="text-center text-muted mb-4">A record of your past quests and enchanted acquisitions.</p>
+
+        {% if orders %}
+          <ul class="list-group list-group-flush">
+            {% for order in orders %}
+              <li class="list-group-item d-flex justify-content-between align-items-center rounded-md shadow-sm mb-2">
+                <div>
+                  <strong>Order #{{ order.id }}</strong>
+                  <br>
+                  <small class="text-muted">
+                    Date: {{ order.created|date:"N j, Y, P" }}
+                  </small>
+                </div>
+                <span class="badge bg-primary rounded-pill">
+                  ${{ order.total_price }}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-center alert alert-info">
+            You haven't embarked on any magical quests yet!
+          </p>
+        {% endif %}
+
+        <hr class="my-4">
+        <a href="{% url 'profile_view' %}"
+           class="btn btn-outline-secondary rounded-md shadow">
+          Back to Profile
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

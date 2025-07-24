@@ -1,0 +1,165 @@
+
+{% extends "myapp/base.html" %}
+{% comment %} ################## ChapterXV topic15.3 The Satchel's Glimpse: Displaying Cart Contents ############# {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% comment %} {% load static %} {# RETAINED: Loads static files #}
+
+{% block title %}Your Magical Cart{% endblock %} {# RETAINED: Title block #}
+
+{% block content %} {# RETAINED: Content block #}
+<div class="container my-5"> {# NEW: Main container for the cart page #}
+    <h1 class="text-center text-primary mb-4">Your Magical Satchel</h1> {# NEW: Page heading #}
+    <p class="text-center text-muted mb-5">Review the treasures you've gathered before proceeding.</p> {# NEW: Introductory text #}
+
+    {% if cart_items %} {# NEW conditional block: Displays cart table if items exist #}
+    <div class="table-responsive"> {# NEW: Wrapper for responsive table #}
+        <table class="table table-bordered table-hover shadow-sm"> {# NEW table structure with Bootstrap styling #}
+            <thead class="table-light"> {# NEW: Table header section #}
+                <tr>
+                    <th scope="col">Product</th> {# NEW: Table header column #}
+                    <th scope="col">Price</th> {# NEW: Table header column #}
+                    <th scope="col">Quantity</th> {# NEW: Table header column #}
+                    <th scope="col">Subtotal</th> {# NEW: Table header column #}
+                    <th scope="col">Actions</th> {# NEW: Table header column #}
+                </tr>
+            </thead>
+            <tbody> {# NEW: Table body section #}
+                {% for item in cart_items %} {# NEW loop: Iterates over each item in the cart #}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if item.product.image %} {# NEW: Conditional display for product image #}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="me-3 rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %} {# NEW: Placeholder if no image #}
+                                <img src="{% static 'myapp/placeholder.png' %}" alt="No image" class="me-3 rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% endif %}
+                            <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-dark fw-bold">{{ item.product.name }}</a> {# NEW: Link product name to its detail page #}
+                        </div>
+                    </td>
+                    <td>${{ item.price }}</td> {# NEW: Displays the price of the item #}
+                    <td>
+                        {# Quantity Update Form (Placeholder for now, will be functional in 15.4) #}
+                        <form action="#" method="POST" class="d-flex align-items-center"> {# NEW form: Placeholder for updating quantity #}
+                            {% csrf_token %} {# NEW: CSRF token for security (required for POST forms) #}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="form-control form-control-sm text-center" style="width: 70px;"> {# NEW input for quantity #}
+                            <button type="submit" class="btn btn-outline-primary btn-sm ms-2" disabled>Update</button> {# NEW button: Disabled for now #}
+                        </form>
+                    </td>
+                    <td>${{ item.get_cost }}</td> {# NEW: Displays the subtotal for the current item #}
+                    <td>
+                        {# Remove Item Button (Placeholder for now, will be functional in 15.4) #}
+                        <form action="#" method="POST"> {# NEW form: Placeholder for removing item #}
+                            {% csrf_token %} {# NEW: CSRF token for security #}
+                            <button type="submit" class="btn btn-outline-danger btn-sm" disabled>Remove</button> {# NEW button: Disabled for now #}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot> {# NEW table footer #}
+                <tr>
+                    <th colspan="3" class="text-end">Grand Total:</th> {# NEW: Label for grand total #}
+                    <th colspan="2">${{ total_price }}</th> {# NEW: Displays the calculated grand total for the cart #}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4"> {# NEW: Container for action buttons #}
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">Continue Shopping</a> {# NEW button: Link to product list #}
+        <a href="#" class="btn btn-success btn-lg disabled">Proceed to Checkout (Coming Soon!)</a> {# NEW button: Disabled checkout placeholder #}
+    </div>
+
+    {% else %} {# NEW else block: Displays message if cart is empty #}
+        <div class="alert alert-info text-center" role="alert"> {# NEW: Alert message for empty cart #}
+            Your magical satchel is empty! Start gathering treasures from our <a href="{% url 'product_list' %}" class="alert-link">product catalog</a>. {# NEW: Link to product catalog #}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}  {% endcomment %}
+
+
+
+{% comment %} ################### Chapter XV topic 15.4  Step-by-Step: Forging the Satchel's Refinement #################### {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% load static %} 
+
+{% block title %}Your Magical Cart{% endblock %} 
+
+{% block content %}
+<div class="container my-5"> 
+    <h1 class="text-center text-primary mb-4">Your Magical Satchel</h1> 
+    <p class="text-center text-muted mb-5">Review the treasures you've gathered before proceeding.</p> 
+
+    {% if cart_items %} 
+    <div class="table-responsive"> 
+        <table class="table table-bordered table-hover shadow-sm"> 
+            <thead class="table-light"> 
+                <tr>
+                    <th scope="col">Product</th> 
+                    <th scope="col">Price</th> 
+                    <th scope="col">Quantity</th> 
+                    <th scope="col">Subtotal</th> 
+                    <th scope="col">Actions</th> 
+                </tr>
+            </thead>
+            <tbody> 
+                {% for item in cart_items %} 
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if item.product.image %} 
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="me-3 rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %} 
+                                <img src="{% static 'myapp/placeholder.png' %}" alt="No image" class="me-3 rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% endif %}
+                            <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-dark fw-bold">{{ item.product.name }}</a> {# RETAINED: Link product name to its detail page #}
+                        </div>
+                    </td>
+                    <td>${{ item.price }}</td> 
+                    <td>
+                        {# Quantity Update Form (Now functional) #}
+                        
+                        <form action="{% url 'update_cart_item' item.id %}" method="POST" class="d-flex align-items-center"> {# MODIFIED: action attribute now points to update_cart_item URL #}
+                            {% csrf_token %} 
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="form-control form-control-sm text-center" style="width: 70px;"> {# RETAINED input for quantity #}
+                            <button type="submit" class="btn btn-outline-primary btn-sm ms-2">Update</button> {# MODIFIED: Removed 'disabled' attribute #}
+                        </form>
+                    </td>
+                    <td>${{ item.get_cost }}</td> 
+                    <td>
+                        {# Remove Item Button (Now functional) #}
+                        <form action="{% url 'remove_from_cart' item.id %}" method="POST"> {# MODIFIED: action attribute now points to remove_from_cart URL #}
+                            {% csrf_token %} 
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button> {# MODIFIED: Removed 'disabled' attribute #}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot> 
+                <tr>
+                    <th colspan="3" class="text-end">Grand Total:</th> 
+                    <th colspan="2">${{ total_price }}</th> 
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4"> 
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">Continue Shopping</a> 
+        <a href="{% url 'checkout' %}" class="btn btn-success btn-lg">Proceed to Checkout</a> 
+    </div>
+
+    {% else %} 
+        <div class="alert alert-info text-center" role="alert"> 
+            Your magical satchel is empty! Start gathering treasures from our <a href="{% url 'product_list' %}" class="alert-link">product catalog</a>. {# RETAINED: Link to product catalog #}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+ 

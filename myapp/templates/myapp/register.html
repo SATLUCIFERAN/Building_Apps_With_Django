@@ -1,0 +1,43 @@
+
+{% extends "myapp/base.html" %}
+{% comment %} ##################### Chapter XII part 2 12.6 User Registration: Initiating a New Identity ############## {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}Register for an Account{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded-lg p-4">
+                <h1 class="card-title text-center mb-4">Initiate Your Magical Identity</h1>
+                <p class="text-center text-muted mb-4">Join our community of alchemists and unlock personalized features!</p>
+
+                <form method="post">
+                    {% csrf_token %} {# Essential for security #}
+
+                    {# Manual rendering for better Bootstrap integration and alignment #}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field.label_tag }} {# Renders the label for the field #}
+                            {{ field }} {# Renders the input element for the field #}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted small">{{ field.help_text }}</div> {# Display help text #}
+                            {% endif %}
+                            {% if field.errors %} {# Check if there are validation errors for this field #}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div> {# Display errors in red, small text #}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid mt-4"> {# Added margin-top for spacing before button #}
+                        <button type="submit" class="btn btn-primary btn-lg rounded-md shadow">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

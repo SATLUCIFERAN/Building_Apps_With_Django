@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: transmutation-magic
+Version: 0.1.0
+Summary: A collection of powerful transmutation spells.
+Author-email: Your Alchemist Name <your.email@example.com>
+Project-URL: Homepage, https://github.com/yourusername/my-transmutation-magic
+Project-URL: Bug Tracker, https://github.com/yourusername/my-transmutation-magic/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Games/Entertainment
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file

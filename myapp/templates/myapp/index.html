@@ -1,0 +1,126 @@
+
+{% extends "myapp/base.html" %}
+
+
+{% comment %} ########## Chapter VII PART 3  topics 7.11 Using Templates: The Enchanted Scroll for Dynamic Content#################### {% endcomment %}
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Django Page</title>
+</head>
+<body>
+    <h1>Welcome, {{ name }}!</h1>
+    <p>This is a dynamic page rendered by Django.</p>
+    <p>Current date and time: {{ current_datetime }}</p>
+    <!-- Logic & Imagination: {{ name }} and {{ current_datetime }} are like shimmering runes.
+         Django will infuse these runes with actual data from the View before sending the page. -->
+</body>
+</html>  {% endcomment %}
+
+
+
+{% comment %} ########## Chapter X PART 1  topics 10.2.2 Tags ({% ... %}): Controlling Flow ################# {% endcomment %}
+
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Django Page</title>
+</head>
+<body>
+    <h1>Welcome, {{ name }}!</h1>
+    <p>This is a dynamic page rendered by Django.</p>
+    <p>Current date and time: {{ current_datetime }}</p>
+
+    <h2>Our Magical Inventory:</h2>
+    <ul>
+        {% for item in magical_items %}
+            <li>{{ item.name }} (Rarity: {{ item.rarity }})</li>
+        {% endfor %}
+    </ul>
+
+    {% if show_secret_message %}
+        <p style="color: blue; font-weight: bold;">
+            A secret message for the initiated Alchemist!
+        </p>
+    {% else %}
+        <p style="color: grey;">
+            No secret message today.
+        </p>
+    {% endif %}
+</body>
+</html> {% endcomment %}
+
+
+
+{% comment %} ########## Chapter X PART 1  topics 10.2.3 Filters (| ... ): Polishing Data ################# {% endcomment %}
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Django Page</title>
+</head>
+<body>
+    <h1>Welcome, {{ name|upper }}!</h1>  
+    <p>This is a dynamic page rendered by Django.</p>
+    <p>Current date and time: {{ current_datetime|date:"F j, Y, P" }}</p>   
+    <h2>Our Magical Inventory:</h2>
+    <ul>
+        {% for item in magical_items %}
+        <li>{{ item.name|length }} characters in "{{ item.name }}" (Rarity: {{ item.rarity }})</li>        
+        {% endfor %}
+    </ul>
+    {% if show_secret_message %}
+    <p style="color: blue; font-weight: bold;">A secret message for the initiated Alchemist!</p>
+    {% else %}
+    <p style="color: grey;">No secret message today.</p>
+    {% endif %}
+</body>
+
+</html> {% endcomment %}
+
+
+
+
+{% comment %} ########## Chapter X PART 1  topics 10.3 Template Inheritance: The Master Blueprint for Reusability ################# {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+
+
+{% block title %}Home – Alchemist App{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Welcome, {{ name|upper }}!</h1>
+<p>This is a dynamic page rendered by Django.</p>
+<p>Current date and time: {{ current_datetime|date:"F j, Y, P" }}</p>
+
+<h2>Our Magical Inventory:</h2>
+<ul class="list-group">
+    {% for item in magical_items %}
+        <li class="list-group-item">
+            {{ item.name|length }} characters in "{{ item.name }}" 
+            (Rarity: {{ item.rarity }})
+        </li>
+    {% endfor %}
+</ul>
+
+{% if show_secret_message %}
+    <p class="alert alert-info mt-3">
+        A secret message for the initiated Alchemist!
+    </p>
+{% else %}
+    <p class="text-muted mt-3">No secret message today.</p>
+{% endif %}
+{% endblock %}
+
+
+
+
+

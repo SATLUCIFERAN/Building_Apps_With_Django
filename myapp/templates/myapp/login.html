@@ -1,0 +1,55 @@
+
+{% extends "myapp/base.html" %}
+{% comment %} ##################### Chapter XII part 2 12.7 User Login: Presenting the Access Amulet ############## {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}Login to Your Account{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded-lg p-4">
+                <h1 class="card-title text-center mb-4">Present Your Access Amulet</h1>
+                <p class="text-center text-muted mb-4">Enter your magical credentials to access your personalized realm.</p>
+
+                <form method="post">
+                    {% csrf_token %} {# Essential for security #}
+
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted small">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {# Non-field errors (e.g., "Please enter a correct username and password") #}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-3">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-md shadow">Login</button>
+                    </div>
+                </form>
+                <p class="text-center mt-3">
+                    Don't have an identity yet? <a href="{% url 'register' %}">Initiate your magical identity here!</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

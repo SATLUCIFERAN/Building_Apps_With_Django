@@ -1,0 +1,157 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Echo Test</title>
+    <style>
+        /* Basic styling for readability and a pleasant appearance */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh; /* Ensure it takes up most of the viewport height */
+        }
+        .container {
+            max-width: 600px;
+            width: 100%; /* Make it responsive */
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Enhanced shadow */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        #messages {
+            border: 1px solid #ddd;
+            height: 200px;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #e9e9e9;
+            border-radius: 4px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        input[type="text"] {
+            width: calc(100% - 80px); /* Adjust width to make room for button */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745; /* Green for send button */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease; /* Smooth hover effect */
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .message-sent {
+            color: #007bff; /* Blue for sent messages */
+            font-weight: bold;
+        }
+        .message-received {
+            color: #dc3545; /* Red for received messages */
+            font-weight: bold;
+        }
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebSocket Echo Test</h1>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <script>        
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // Construct the WebSocket URL.
+        // We use 'ws://' for unencrypted connections (common for local development).
+        // If your Django project were served over HTTPS, you would use 'wss://'.
+        // The path '/ws/echo/' must exactly match the re_path defined in myapp/routing.py.
+
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/echo/');
+
+        // Event listener: Fired when the WebSocket connection is successfully opened.
+
+        socket.onopen = function(e) {
+            console.log('WebSocket connection established!');
+            messagesDiv.innerHTML += '<p style="color: gray;">Connected to WebSocket!</p>';
+        };
+
+        // Event listener: Fired when a message is received from the server over the WebSocket.
+        
+        socket.onmessage = function(e) {            
+            const data = JSON.parse(e.data);
+            console.log('Message from server:', data); 
+            messagesDiv.innerHTML += `<p class="message-received">Received:
+                                       ${data.message}</p>`;            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        };
+
+        // Event listener: Fired when the WebSocket connection is closed.
+
+        socket.onclose = function(e) {
+            console.error('WebSocket connection closed unexpectedly:', e.code, e.reason);
+            messagesDiv.innerHTML += `<p style="color: red;">Disconnected from WebSocket. 
+                                       Code: ${e.code}, Reason: ${e.reason}</p>`;
+        };
+
+        // Event listener: Fired when an error occurs on the WebSocket connection.
+
+        socket.onerror = function(e) {
+            console.error('WebSocket error:', e);
+            messagesDiv.innerHTML += `<p style="color: red;">WebSocket Error!</p>`;
+        };
+
+        // Helper function to send a message to the server.
+
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message) { 
+                
+                socket.send(JSON.stringify({ 'message': message }));
+                messagesDiv.innerHTML += `<p class="message-sent">Sent: ${message}</p>`;
+                messageInput.value = ''; 
+                messagesDiv.scrollTop = messagesDiv.scrollHeight; 
+            }
+        }
+
+        // Attach event listeners to the send button and input field for user interaction.
+        
+        sendButton.addEventListener('click', sendMessage); 
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { 
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

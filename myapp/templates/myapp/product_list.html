@@ -1,0 +1,643 @@
+
+{% extends "myapp/base.html" %}
+
+{% comment %} ########## Chapter X PART 2  topics 10.7.1 ListView: Displaying a Catalog of Scrolls ################# {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %}
+{% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+  <h1 class="mt-4">Our Magical Product Catalog</h1>
+
+  {% if products %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for product in products %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            {% if product.image %}
+              <img
+                src="{{ product.image.url }}"
+                class="card-img-top"
+                alt="{{ product.name }}"
+                style="max-height: 200px; object-fit: contain; padding: 10px;"
+              >
+            {% else %}
+              <img
+                src="{% static 'myapp/placeholder.png' %}"
+                class="card-img-top"
+                alt="No image"
+                style="max-height: 200px; object-fit: contain; padding: 10px;"
+              >
+            {% endif %}
+
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+              <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+              <a href="#" class="btn btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="alert alert-warning">
+      No magical products found in the catalog yet!
+    </p>
+  {% endif %}
+{% endblock %} {% endcomment %}
+
+
+{% comment %} ########## Chapter X PART 2  topics 10.7.2 DetailView: Revealing a Single Scroll's Secrets ################# {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% comment %} {% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+  <h1 class="mt-4">Our Magical Product Catalog</h1>
+
+  {% if products %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for product in products %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            {% if product.image %}
+              <img
+                src="{{ product.image.url }}"
+                class="card-img-top"
+                alt="{{ product.name }}"
+                style="max-height: 200px; object-fit: contain; padding: 10px;"
+              >
+            {% else %}
+              <img
+                src="{% static 'myapp/placeholder.png' %}"
+                class="card-img-top"
+                alt="No image"
+                style="max-height: 200px; object-fit: contain; padding: 10px;"
+              >
+            {% endif %}
+
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+              <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+              <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="alert alert-warning">
+      No magical products found in the catalog yet!
+    </p>
+  {% endif %}
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} ############### Chapter X PART 2  topics 10.8 Pagination: Managing Large Product Lists ################# {% endcomment %}
+
+{% comment %} 
+{% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Our Magical Product Catalog</h1>
+
+{% if products %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                {% else %}
+                    <img src="{% static 'myapp/placeholder.png' %}" class="card-img-top" alt="No image" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                    <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                    <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Pagination Controls #}
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"\
+                     aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav> 
+    {% comment %}Logic & Imagination: These are the magical page-turning buttons.
+       They use the 'page_obj' (provided by ListView) to determine
+       if there's a previous/next page and to generate links to specific page numbers.{% endcomment %}
+
+ {% comment %} {% else %}
+    <p class="alert alert-warning">No magical products found in the catalog yet!</p>
+{% endif %}
+
+{% endblock %} 
+ {% endcomment %} 
+
+
+
+
+
+
+{% comment %} #################### ChapterXI topic 11.5 HTML Forms: The Customer's Inquiry Parchment #################### {% endcomment %}
+
+{% comment %} {% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+{# Search Form #}
+<form action="" method="GET" class="d-flex mb-4">
+    <input class="form-control me-2" type="search" placeholder="Search for magical items..." aria-label="Search" name="q">
+    {# Logic & Imagination: This is the customer's query quill. 'name="q"' means the query will be sent as 'q'. #}
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+    {# Logic & Imagination: This is the "send inquiry" button. #}
+</form>
+{# End Search Form #}
+
+<h1 class="mt-4">Our Magical Product Catalog</h1>
+
+{% if products %} {# Logic & Imagination: Check if the 'products' list (from context_object_name) is not empty #}
+    <div class="row row-cols-1 row-cols-md-3 g-4"> {# Bootstrap grid for responsive cards #}
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                {% else %}
+                    <img src="{% static 'myapp/placeholder.png' %}" class="card-img-top" alt="No image" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                    {# Logic & Imagination: If no image portal exists, use a generic placeholder image. #}
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatechars:100 }}</p> {# Filter to shorten description #}
+                    <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                    <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary">View Details</a> {# Placeholder for detail view link #}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {# Pagination Controls (as before) #}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+{% else %}
+    <p class="alert alert-warning">No magical products found in the catalog yet!</p>
+{% endif %}
+
+{% endblock %} 
+
+ {% endcomment %}
+
+
+
+{% comment %} ############# Chapter XIII topic 13.4 Displaying the Masterpieces: Showing Product Images on the Frontend ############## {% endcomment %}
+
+
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %} 
+{% comment %} {% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+<div class="container my-5"> {# <--- NEW/MODIFIED: Added container for better layout and spacing #}
+    <h1 class="text-center text-primary mb-4">Our Enchanted Product Catalog</h1> {# <--- NEW/MODIFIED: Enhanced heading style for visual appeal #}
+    <p class="text-center text-muted mb-5">Discover magical artifacts, powerful potions, and ancient scrolls for your craft.</p> {# <--- NEW/MODIFIED: Added descriptive introductory text #}
+
+    {# Search Form #}
+    <form action="" method="GET" class="d-flex mb-4">
+        <input class="form-control me-2" type="search" placeholder="Search for magical items..." aria-label="Search" name="q" value="{{ request.GET.q|default:'' }}"> <!-- MODIFIED: Added value attribute to persist query -->
+        {# Logic & Imagination: This is the customer's query quill. 'name="q"' means the query will be sent as 'q'. #}
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+        {# Logic & Imagination: This is the "send inquiry" button. #}
+    </form>
+    {# End Search Form #}
+
+    {% if products %} {# Logic & Imagination: Check if the 'products' list (from context_object_name) is not empty #}
+        <div class="row row-cols-1 row-cols-md-3 g-4"> {# Bootstrap grid for responsive cards #}
+            {% for product in products %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 200px; object-fit: contain; padding: 10px;"> <!-- NEW/MODIFIED: Added image display logic and retained your preferred styling -->
+                    {% else %}
+                        <img src="{% static 'myapp/placeholder.png' %}" class="card-img-top" alt="No image" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                        {# Logic & Imagination: If no image portal exists, use a generic placeholder image. #}
+
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description|truncatechars:100 }}</p> 
+                        <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                        <a href="{{ product.get_absolute_url }}" 
+                           class="btn btn-primary">View Details</a> 
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Pagination Controls #}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Previous"> <!-- MODIFIED: Preserve search query in pagination links -->
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li> <!-- MODIFIED: Preserve search query in pagination links -->
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Next"> <!-- MODIFIED: Preserve search query in pagination links -->
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {# End Pagination Controls #}
+
+    {% else %}
+        <p class="alert alert-warning">No magical products found in the catalog yet!</p>
+    {% endif %}
+
+</div> {# <--- NEW/MODIFIED: Closing container div #}
+{% endblock %} 
+ {% endcomment %}
+
+
+
+ 
+
+{% comment %} ############### ChapterXIV topic 14.1 Implementing Basic Product Search ################## {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% comment %} {% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center text-primary mb-4">Our Enchanted Product Catalog</h1>
+    <p class="text-center text-muted mb-5">Discover magical artifacts, powerful potions, and ancient scrolls for your craft.</p>
+
+    {# Search Form #}
+    <form action="" method="GET" class="d-flex mb-4">
+        <input class="form-control me-2" type="search" placeholder="Search for magical items..." aria-label="Search" name="q" value="{{ request.GET.q|default:'' }}">
+        {# Logic & Imagination: This is the customer's query quill. 'name="q"' means the query will be sent as 'q'. #}
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+        {# Logic & Imagination: This is the "send inquiry" button. #}
+    </form>
+    {# End Search Form #}
+
+    <div class="row">
+        <div class="col-md-3">
+            <h4 class="mb-3 text-secondary">Magical Disciplines</h4>
+            <div class="list-group">                
+                <a href="{% url 'product_list' %}
+                         {% if request.GET.q %}?q={{ request.GET.q }}{% endif %}"
+                   class="list-group-item list-group-item-action 
+                         {% if not selected_category_slug %}active{% endif %}">
+                    All Products
+                </a>
+
+                
+                
+                {% for category in categories %}
+                    <a href="{% url 'product_list' %}?category={{ category.slug }}
+                        {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
+                       class="list-group-item list-group-item-action 
+                        {% if selected_category_slug == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% if products %}
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for product in products %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                            {% else %}
+                                <img src="{% static 'myapp/placeholder.png' %}" class="card-img-top" alt="No image" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                                <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                                <a href="{{ product.get_absolute_url }}" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {# Pagination Controls #}
+
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"                                 
+                                   href="?page={{ page_obj.previous_page_number }}
+                                   {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}
+                                   {% if selected_category_slug %}
+                                   &category={{ selected_category_slug }}{% endif %}" 
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+
+
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {# End Pagination Controls #}
+
+            {% else %}
+                <p class="alert alert-warning">No magical products found in the catalog yet!</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}  {% endcomment %}
+
+
+
+
+
+{% comment %} ######### ChapterXIV topic 14.3 (Continued) The Price Divination: Crafting the Price Orb ######## {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% load static %}
+
+{% block title %}Our Magical Products{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center text-primary mb-4">Our Enchanted Product Catalog</h1>
+    <p class="text-center text-muted mb-5">Discover magical artifacts, powerful potions, and ancient scrolls for your craft.</p>
+
+    {# Main Filter Form - This form will submit all filters (search, category, price) #}
+    <form action="" method="GET" class="mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+                {# Search Input #}
+                <label for="search-query" class="form-label visually-hidden">Search for magical items...</label>
+                <input class="form-control" type="search" id="search-query" placeholder="Search for magical items..." aria-label="Search" name="q" value="{{ current_query }}">
+            </div>
+            <div class="col-md-2">
+                {# Min Price Input #}
+                <label for="min-price" class="form-label">Min Price</label>
+                <input class="form-control" type="number" id="min-price" name="min_price" value="{{ min_price }}" step="0.01" min="0">
+            </div>
+            <div class="col-md-2">
+                {# Max Price Input #}
+                <label for="max-price" class="form-label">Max Price</label>
+                <input class="form-control" type="number" id="max-price" name="max_price" value="{{ max_price }}" step="0.01" min="0">
+            </div>
+            <div class="col-md-2">
+                {# Submit Button #}
+                <button class="btn btn-primary w-100" type="submit">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+    {# End Main Filter Form #}
+
+    <div class="row">
+        <div class="col-md-3">
+            <h4 class="mb-3 text-secondary">Magical Disciplines</h4>
+            <div class="list-group mb-4"> {# Added mb-4 for spacing below categories #}
+                {# Link to show all products #}
+                <a href="{% url 'product_list' %}{% if current_query %}?q={{ current_query }}{% endif %}{% if min_price %}{% if not current_query %}{% else %}&{% endif %}min_price={{ min_price }}{% endif %}{% if max_price %}{% if not current_query and not min_price %}{% else %}&{% endif %}max_price={{ max_price }}{% endif %}"
+                   class="list-group-item list-group-item-action {% if not selected_category_slug %}active{% endif %}">
+                    All Products
+                </a>
+                {# Loop through categories to create filter links #}
+                {% for category in categories %}
+                    <a href="{% url 'product_list' %}?category={{ category.slug }}{% if current_query %}&q={{ current_query }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}"
+                       class="list-group-item list-group-item-action {% if selected_category_slug == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {% if products %}
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for product in products %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                            {% else %}
+                                <img src="{% static 'myapp/placeholder.png' %}" class="card-img-top" alt="No image" style="max-height: 200px; object-fit: contain; padding: 10px;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                                <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                                <a href="{{ product.get_absolute_url }}" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {# Pagination Controls #}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_query %}&q={{ current_query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if current_query %}&q={{ current_query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_query %}&q={{ current_query }}{% endif %}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {# End Pagination Controls #}
+
+            {% else %}
+                <p class="alert alert-warning">No magical products found in the catalog yet!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

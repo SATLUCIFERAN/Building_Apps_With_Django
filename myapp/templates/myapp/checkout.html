@@ -1,0 +1,367 @@
+
+{% extends "myapp/base.html" %} 
+{% comment %} ############### Chapter XV topic 15.5: The Final Incantation: Implementing Checkout###########  {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% comment %} {% load static %} {# RETAINED: Loads static files #}
+
+{% block title %}Checkout - Final Incantation{% endblock %} {# NEW: Specific title for checkout page #}
+
+{% block content %} {# RETAINED: Content block #}
+<div class="container my-5"> {# RETAINED: Main container #}
+    <h1 class="text-center text-primary mb-4">The Final Incantation</h1> {# NEW: Page heading #}
+    <p class="text-center text-muted mb-5">Confirm your magical treasures and their destination.</p> {# NEW: Introductory text #}
+
+    {% if cart_items %} {# RETAINED conditional block: Ensures cart is not empty #}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light fw-bold">Your Magical Haul</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for item in cart_items %} {# RETAINED loop: Displays each cart item #}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">{{ item.product.name }}</h6>
+                                    <small class="text-muted">{{ item.quantity }} x ${{ item.price }}</small>
+                                </div>
+                                <span class="fw-bold">${{ item.get_cost }}</span>
+                            </li>
+                            {% endfor %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+                                <span>Grand Total:</span>
+                                <span>${{ total_price }}</span> {# RETAINED: Displays total price #}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold">Destination Scroll (Shipping Details)</div>
+                    <div class="card-body">
+                        {# This is a simplified form for demonstration. In a real app, you'd use a Django Form. #}
+                        <form method="POST"> {# NEW form: For submitting checkout details #}
+                            {% csrf_token %} {# RETAINED: CSRF token for security #}
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Magical Address Line 1</label>
+                                <input type="text" class="form-control" id="address" name="address1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address2" class="form-label">Magical Address Line 2 (Optional)</label>
+                                <input type="text" class="form-control" id="address2" name="address2">
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City of Enchantment</label>
+                                    <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="state" class="form-label">Realm/State</label>
+                                    <input type="text" class="form-control" id="state" name="state" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="zip" class="form-label">Postal Code</label>
+                                    <input type="text" class="form-control" id="zip" name="zip" required>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <h5 class="mb-3">Payment Method (Simulated)</h5>
+                            <div class="form-check">
+                                <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
+                                <label class="form-check-label" for="credit">Magical Orb (Credit Card)</label>
+                            </div>
+                            <div class="form-check">
+                                <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
+                                <label class="form-check-label" for="debit">Ancient Runes (Debit Card)</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
+                                <label class="form-check-label" for="paypal">Fairy Dust (PayPal)</label>
+                            </div>
+                            <button class="w-100 btn btn-primary btn-lg" type="submit">Place Order (Cast Final Incantation)</button> {# NEW button #}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold">Order Summary</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Subtotal
+                                <span>${{ total_price }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Shipping (Magical Delivery)
+                                <span>$0.00</span> {# Placeholder for now #}
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center fw-bold bg-light">
+                                Total
+                                <span>${{ total_price }}</span>
+                            </li>
+                        </ul>
+                        <div class="d-grid mt-3">
+                            <a href="{% url 'cart_details' %}" class="btn btn-outline-secondary">Return to Satchel</a> {# RETAINED button #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %} {# RETAINED else block #}
+        <div class="alert alert-info text-center" role="alert"> {# RETAINED: Empty cart message #}
+            Your magical satchel is empty! Please add items before checking out. <a href="{% url 'product_list' %}" class="alert-link">Start gathering treasures</a>.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}  {% endcomment %}
+
+
+
+{% comment %} ################## Chapter XVIII 18.5:The Unified Checkout: Integrating Payment into checkout.html ############## {% endcomment %}
+
+
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}Checkout - Final Incantation{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center text-primary mb-4">The Final Incantation</h1>
+    <p class="text-center text-muted mb-5">Confirm your magical treasures and their destination.</p>
+
+    {% if cart_items %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light fw-bold">Your Magical Haul</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for item in cart_items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">{{ item.product.name }}</h6>
+                                    <small class="text-muted">{{ item.quantity }} x ${{ item.price }}</small>
+                                </div>
+                                <span class="fw-bold">${{ item.get_cost }}</span>
+                            </li>
+                            {% endfor %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+                                <span>Grand Total:</span>
+                                <span>${{ total_price }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold">Destination Scroll & Payment (Shipping Details & Payment)</div>
+                    <div class="card-body">
+                        {# This form will now handle both shipping details and trigger Stripe payment #}
+                        <form id="payment-form" method="POST"> {# Changed to id="payment-form" #}
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Magical Address Line 1</label>
+                                <input type="text" class="form-control" id="address" name="address1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address2" class="form-label">Magical Address Line 2 (Optional)</label>
+                                <input type="text" class="form-control" id="address2" name="address2">
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City of Enchantment</label>
+                                    <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="state" class="form-label">Realm/State</label>
+                                    <input type="text" class="form-control" id="state" name="state" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="zip" class="form-label">Postal Code</label>
+                                    <input type="text" class="form-control" id="zip" name="zip" required>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <h5 class="mb-3">Payment Method (Magical Orb)</h5>
+                            
+                            {# This is where Stripe Elements will inject the card input fields #}
+                            <div id="card-element" class="form-control">
+                                <!-- A Stripe Element will be inserted here. -->
+                            </div>
+                            <!-- Used to display form errors. -->
+                            <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+
+                            <button id="submit-button" class="w-100 btn btn-primary btn-lg mt-4" type="submit">
+                                Complete Purchase (Cast Final Incantation)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold">Order Summary</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Subtotal
+                                <span>${{ total_price }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Shipping (Magical Delivery)
+                                <span>$0.00</span> {# Placeholder for now #}
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center fw-bold bg-light">
+                                Total
+                                <span>${{ total_price }}</span>
+                            </li>
+                        </ul>
+                        <div class="d-grid mt-3">
+                            <a href="{% url 'cart_details' %}" class="btn btn-outline-secondary">Return to Satchel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            Your magical satchel is empty! Please add items before checking out. <a href="{% url 'product_list' %}" class="alert-link">Start gathering treasures</a>.
+        </div>
+    {% endif %}
+</div>
+
+<!-- Stripe.js CDN -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    // Get the Stripe Publishable Key from Django's context
+    const stripePublishableKey = "{{ stripe_publishable_key }}";
+    const stripe = Stripe(stripePublishableKey);
+    const elements = stripe.elements();
+
+    // Create an instance of the card Element.
+    const card = elements.create('card', {
+        style: {
+            base: {
+                iconColor: '#666EE8',
+                color: '#313259',
+                fontWeight: '400',
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4',
+                },
+            },
+            invalid: {
+                iconColor: '#FFC7EE',
+                color: '#FFC7EE',
+            },
+        },
+    });
+
+    // Add an instance of the card Element into the `card-element` div.
+    card.mount('#card-element');
+
+    // Handle real-time validation errors from the card Element.
+    card.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle form submission.
+    const form = document.getElementById('payment-form');
+    const submitButton = document.getElementById('submit-button');
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        submitButton.disabled = true; // Disable the button to prevent multiple submissions
+
+        // First, validate shipping details (if you had a Django form for this)
+        // For now, we'll assume the HTML 'required' attribute handles basic validation.
+        const address1 = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const zip = document.getElementById('zip').value;
+
+        if (!address1 || !city || !state || !zip) {
+            alert('Please fill in all required shipping details.');
+            submitButton.disabled = false;
+            return;
+        }
+
+        // Create a payment method token from the card Element.
+        const { token, error } = await stripe.createToken(card);
+
+        if (error) {
+            // Inform the user if there was an error.
+            const errorElement = document.getElementById('card-errors');
+            errorElement.textContent = error.message;
+            submitButton.disabled = false; // Re-enable the button
+        } else {
+            // Send the token to your server.
+            try {
+                const response = await fetch('/myfirstapp/process-payment/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        token: token.id,
+                        // No need to send amount from client, server calculates it for security
+                        // You could send shipping details here if you want to save them with the order
+                        shipping_address: {
+                            address1: address1,
+                            address2: document.getElementById('address2').value,
+                            city: city,
+                            state: state,
+                            zip: zip
+                        }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Payment successful! Redirecting to order confirmation.');
+                    // Redirect to the order confirmation page using the order_id from the server
+                    window.location.href = `/order-confirmation/${result.order_id}/`;
+                } else {
+                    alert('Payment failed: ' + result.error);
+                    // Optionally, display the error message in a more user-friendly way
+                }
+            } catch (fetchError) {
+                console.error('Error sending token to server:', fetchError);
+                alert('An error occurred while processing your payment.');
+            } finally {
+                submitButton.disabled = false; // Re-enable the button regardless of success/failure
+            }
+        }
+    });
+
+    // Helper function to get CSRF token (needed for Django POST requests)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

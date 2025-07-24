@@ -1,0 +1,56 @@
+
+{% extends "myapp/base.html" %}
+{% comment %} ##################### Chapter XII  Part 3: The Alchemist's Welcome: Crafting the Home Page (/) ##############  {% endcomment %}
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% load static %}
+
+{% block title %}Welcome to My Magical Store!{% endblock %}
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid text-center bg-light py-5 rounded-lg shadow-sm mb-5">
+    <div class="container">
+        <h1 class="display-4 text-primary">Welcome, Aspiring Alchemist!</h1>
+        <p class="lead text-muted">Your journey into the boundless digital cosmos begins here. Discover enchanted artifacts, powerful potions, and ancient scrolls.</p>
+        <hr class="my-4">
+        <p>Explore our curated collection of magical goods, designed to empower your craft.</p>
+        <a class="btn btn-primary btn-lg rounded-md shadow" href="{% url 'product_list' %}" role="button">Begin Your Exploration!</a>
+        {# Logic & Imagination: A grand button guiding new arrivals to the main product catalog. #}
+    </div>
+</div>
+
+<div class="row text-center mb-5">
+    <div class="col-md-4">
+        <div class="card shadow-sm rounded-md h-100">
+            <div class="card-body">
+                <h5 class="card-title text-success">Secure Transactions</h5>
+                <p class="card-text text-muted">All your purchases are protected by ancient encryption spells.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm rounded-md h-100">
+            <div class="card-body">
+                <h5 class="card-title text-info">Vast Catalog</h5>
+                <p class="card-text text-muted">Thousands of unique magical items await your discovery.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm rounded-md h-100">
+            <div class="card-body">
+                <h5 class="card-title text-warning">Personalized Journeys</h5>
+                <p class="card-text text-muted">Register to unlock exclusive features and track your magical quests.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <h2>Ready to Conjure Your Own Creations?</h2>
+    <p class="lead text-muted">If you're a vendor of magical goods, consider joining our network.</p>
+    <a class="btn btn-outline-secondary btn-lg rounded-md shadow" href="{% url 'register' %}" role="button">Become a Vendor (Register)</a>
+    {# Logic & Imagination: Guiding aspiring vendors to the registration ritual. #}
+</div>
+
+{% endblock %}

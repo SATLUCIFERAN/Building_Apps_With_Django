@@ -1,0 +1,124 @@
+
+{% extends "myapp/base.html" %}
+
+{% comment %} ########### Chapter XI   topic 11.6 Django Forms: The Alchemist's Form-Building Spells ############ {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %} {% endcomment %}
+{% comment %} {% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container my-5"> 
+    <div class="row justify-content-center"> 
+        <div class="col-md-8 col-lg-6"> 
+            <div class="card shadow-lg rounded-lg p-4"> 
+                <h1 class="card-title text-center mb-4">Contact Our Alchemists</h1>
+                <p class="text-center text-muted mb-4">
+                Have a question about our magical products or services? Send us a message!
+                </p>
+
+                <form method="post"> 
+                    {% csrf_token %}                     
+                    <div class="mb-3"> 
+                        {{ form.name.label_tag }} 
+                        {{ form.name }} 
+                        {% if form.name.errors %} 
+                            <div class="text-danger small mt-1">{{ form.name.errors }}</div> 
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4"> 
+                        {{ form.message.label_tag }}
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="text-danger small mt-1">{{ form.message.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid"> 
+                        <button type="submit" class="btn btn-primary btn-lg rounded-md shadow">
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}  {% endcomment %}
+
+
+
+
+
+{% comment %} ##################### Chapter XI Part 3   11.8 Implementing reCAPTCHA  ################## {% endcomment %}
+
+{% load static %}
+
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded-lg p-4">
+                <h1 class="card-title text-center mb-4">Contact Our Alchemists</h1>
+                <p class="text-center text-muted mb-4">Have a question about our magical products or services? Send us a message!</p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.message.label_tag }}
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="text-danger small mt-1">{{ form.message.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# NEW: Place the reCAPTCHA field here #}
+                    <div class="mb-4">
+                        {{ form.captcha }} {# This renders the reCAPTCHA checkbox #}
+                        {% if form.captcha.errors %}
+                            <div class="text-danger small mt-1">{{ form.captcha.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-md shadow">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

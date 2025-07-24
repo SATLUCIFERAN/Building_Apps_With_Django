@@ -1,0 +1,55 @@
+
+{% extends "myapp/base.html" %} 
+
+{% comment %} ############### Chapter XV topic 15.5: The Final Incantation: Implementing Checkout###########  {% endcomment %}
+
+
+{% comment %} {% extends "myapp/base.html" %}  {% endcomment %}
+{% load static %} 
+
+{% block title %}Order Confirmation{% endblock %} 
+
+{% block content %} 
+<div class="container my-5"> 
+    <h1 class="text-center text-success mb-4">Order Confirmed!</h1> 
+    <p class="text-center text-muted mb-5">Your magical treasures are on their way!</p> 
+
+    <div class="card shadow-sm mb-4"> 
+        <div class="card-header bg-light fw-bold">Order #{{ order.id }} Details</div> 
+        <div class="card-body">
+            <p><strong>Order Date:</strong> {{ order.created|date:"F d, Y H:i" }}</p> 
+            <p><strong>Total Amount:</strong> ${{ order.total_price }}</p> 
+            <p><strong>Status:</strong> {{ order.status }}</p>
+
+            <h5 class="mt-4 mb-3">Items Purchased:</h5> 
+            <ul class="list-group list-group-flush">
+                {% for item in order_items %} 
+                <li class="list-group-item d-flex 
+                          justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">{{ item.product.name }}</h6>
+                        <small class="text-muted">{{ item.quantity }} 
+                                     x ${{ item.price }}</small>
+                    </div>
+                    <span class="fw-bold">${{ item.get_cost }}</span> 
+                </li>
+                {% endfor %}
+            </ul>
+
+            <h5 class="mt-4 mb-3">Shipping Information (Simulated):</h5> 
+            <p>Magical Address Line 1: [Simulated Address 1]</p> 
+            <p>Magical Address Line 2: [Simulated Address 2]</p> 
+            <p>City of Enchantment: [Simulated City]</p> 
+            <p>Realm/State: [Simulated State]</p> 
+            <p>Postal Code: [Simulated Zip]</p> 
+        </div>
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4"> 
+        <a href="{% url 'order_history' %}" 
+           class="btn btn-primary btn-lg">View Order History</a> 
+        <a href="{% url 'product_list' %}" 
+           class="btn btn-outline-secondary btn-lg">Continue Shopping</a> S
+    </div>
+</div>
+{% endblock %}
